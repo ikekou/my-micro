@@ -1,0 +1,43 @@
+{
+  "name": "@my-micro/web",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "CLOUDFLARE_ENV= react-router build",
+    "build:production": "CLOUDFLARE_ENV=production react-router build",
+    "dev": "CLOUDFLARE_ENV= react-router dev",
+    "typecheck": "npm run cf-typegen && react-router typegen && tsc -b",
+    "deploy": "npm run build:production && CLOUDFLARE_ENV=production wrangler deploy",
+    "preview": "npm run build && CLOUDFLARE_ENV= vite preview",
+    "cf-typegen": "wrangler types --config wrangler.jsonc --env \"\" --strict-vars=false",
+    "postinstall": "npm run cf-typegen",
+    "test": "node --import tsx --test tests/*/*.test.ts",
+    "db:migrate": "wrangler d1 migrations apply my-micro --config wrangler.jsonc --env \"\" --local",
+    "db:migrate:remote": "wrangler d1 migrations apply my-micro --config wrangler.jsonc --env production --remote",
+    "secret:production": "wrangler secret put --config wrangler.jsonc --env production",
+    "admin": "CLOUDFLARE_ENV= node --import tsx app/server/admin.ts",
+    "admin:production": "CLOUDFLARE_ENV=production node --import tsx app/server/admin.ts"
+  },
+  "dependencies": {
+    "isbot": "5.2.2",
+    "react": "19.3.0",
+    "react-dom": "19.3.0",
+    "react-router": "8.3.1",
+    "@my-micro/shared": "0.1.0",
+    "better-auth": "1.7.4",
+    "zod": "4.6.2"
+  },
+  "devDependencies": {
+    "@cloudflare/vite-plugin": "1.54.8",
+    "@react-router/dev": "8.3.1",
+    "@tailwindcss/vite": "4.3.3",
+    "@types/node": "22.20.2",
+    "@types/react": "19.3.0",
+    "@types/react-dom": "19.3.0",
+    "tailwindcss": "4.3.3",
+    "typescript": "5.9.3",
+    "vite": "8.3.0",
+    "wrangler": "4.131.1",
+    "miniflare": "5.20260911.0-alpha"
+  }
+}

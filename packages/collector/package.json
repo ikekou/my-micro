@@ -1,0 +1,16 @@
+{
+  "name": "@my-micro/collector",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "esbuild src/cli.ts --bundle --platform=node --format=esm --target=node22 --outfile=../../plugins/my-micro/scripts/my-micro.mjs",
+    "typecheck": "tsc --noEmit",
+    "test": "node --import tsx --test test/*.test.ts"
+  },
+  "dependencies": {
+    "@my-micro/shared": "0.1.0",
+    "smol-toml": "1.8.0",
+    "zod": "4.6.2"
+  }
+}

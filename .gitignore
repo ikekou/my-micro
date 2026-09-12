@@ -1,0 +1,17 @@
+node_modules/
+build/
+dist/
+.wrangler/
+.react-router/
+.dev.vars
+.env
+.env.*
+!.env.example
+coverage/
+.DS_Store
+.local/
+*.log
+*.tsbuildinfo
+apps/web/worker-configuration.d.ts
+apps/web/.agents/
+apps/web/.vscode/

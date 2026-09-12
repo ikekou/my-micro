@@ -1,0 +1,25 @@
+{
+  "name": "my-micro",
+  "private": true,
+  "type": "module",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "npm run dev --workspace=@my-micro/web",
+    "build": "npm run build --workspace=@my-micro/web && npm run build --workspace=@my-micro/collector",
+    "typecheck": "npm run typecheck --workspaces --if-present",
+    "test": "npm run test --workspaces --if-present",
+    "db:migrate": "npm run db:migrate --workspace=@my-micro/web"
+  },
+  "engines": {
+    "node": ">=22.16.0"
+  },
+  "devDependencies": {
+    "tsx": "4.23.13",
+    "typescript": "5.9.3",
+    "esbuild": "0.27.7",
+    "@types/node": "24.13.4"
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "name": "my-micro",
+  "interface": {
+    "displayName": "My Micro"
+  },
+  "plugins": [
+    {
+      "name": "my-micro",
+      "source": {
+        "source": "local",
+        "path": "./plugins/my-micro"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity"
+    }
+  ]
+}

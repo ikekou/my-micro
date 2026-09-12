@@ -1,0 +1,5 @@
+# Copy to .dev.vars for local GitHub sign-in. Keep the real file out of Git.
+# Generate BETTER_AUTH_SECRET with: openssl rand -hex 32
+BETTER_AUTH_SECRET=
+GITHUB_CLIENT_ID=
+GITHUB_CLIENT_SECRET=

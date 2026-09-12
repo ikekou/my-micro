@@ -1,0 +1,45 @@
+{
+  "$schema": "../../node_modules/wrangler/config-schema.json",
+  "name": "my-micro",
+  "main": "./workers/app.ts",
+  "compatibility_date": "2026-09-12",
+  "compatibility_flags": [
+    "nodejs_compat"
+  ],
+  "vars": {
+    "BETTER_AUTH_URL": "http://localhost:5173",
+    "SUPPORT_URL": ""
+  },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "my-micro",
+      "database_id": "00000000-0000-0000-0000-000000000000",
+      "migrations_dir": "migrations"
+    }
+  ],
+  "env": {
+    "production": {
+      "name": "my-micro",
+      "account_id": "20f20a1d7253a4da821c6350f4366b81",
+      "vars": {
+        "BETTER_AUTH_URL": "https://my-micro.ikekou-20f.workers.dev",
+        "SUPPORT_URL": "https://github.com/ikekou/my-micro/issues"
+      },
+      "d1_databases": [
+        {
+          "binding": "DB",
+          "database_name": "my-micro",
+          "database_id": "1025dd30-36fa-414b-b9d8-691f1c849ee5",
+          "migrations_dir": "migrations"
+        }
+      ]
+    }
+  },
+  "observability": {
+    "enabled": true,
+    "redact_query_string": true,
+    "head_sampling_rate": 1
+  },
+  "upload_source_maps": true
+}

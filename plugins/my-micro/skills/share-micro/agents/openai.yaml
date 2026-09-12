@@ -1,0 +1,4 @@
+interface:
+  display_name: "Share My Micro"
+  short_description: "Preview and share your Codex Micro configuration"
+  default_prompt: "Create a local preview of my Micro settings and ask before publishing."

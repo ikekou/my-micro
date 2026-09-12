@@ -1,0 +1,23 @@
+{
+  "name": "my-micro",
+  "version": "0.1.0",
+  "description": "Preview and share Codex Micro settings after confirmation.",
+  "author": {
+    "name": "ikekou",
+    "url": "https://github.com/ikekou"
+  },
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "My Micro",
+    "shortDescription": "Preview and share your Codex Micro settings",
+    "longDescription": "Create a local, privacy-filtered snapshot of supported Codex Micro settings, review it in Codex, and publish only after explicit confirmation.",
+    "developerName": "ikekou",
+    "category": "Productivity",
+    "capabilities": [],
+    "defaultPrompt": [
+      "自分のMicro設定から投稿案を作り、公開前に内容を確認させてください。"
+    ]
+  },
+  "repository": "https://github.com/ikekou/my-micro",
+  "license": "MIT"
+}
