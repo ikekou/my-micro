@@ -4,6 +4,8 @@ Codex Microの設定を眺め、自分の使い方も共有するギャラリー
 
 Browse how people use Codex Micro, then share your own setup from Codex. The site offers Japanese and English interfaces; post text stays in its original language.
 
+[ギャラリーを開く / Open the gallery](https://my-micro.ikekou-20f.workers.dev/) · [自分のMicroを共有 / Share your Micro](https://my-micro.ikekou-20f.workers.dev/share)
+
 ## できること
 
 - 実物を模した2D表示で、キーキャップ、キー・ノブ・スティックの機能とオプションを閲覧。

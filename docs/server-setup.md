@@ -17,7 +17,7 @@ Run `npm run db:migrate` and `npm run dev` from the repository root. For a local
 
 `apps/web/wrangler.jsonc` keeps the local configuration at the top level and production settings under `env.production`. Production explicitly defines the Worker name `my-micro`, account ID, complete `vars`, and D1 binding because variables and bindings are not inherited between environments. The local placeholder database ID is intentional: local migration and development commands use local D1 storage.
 
-The production origin is `https://my-micro.ikekou-20f.workers.dev`. Register `https://my-micro.ikekou-20f.workers.dev/api/auth/callback/github` as the GitHub OAuth callback and use that App's credentials in production. Keep the local callback registered too, or use a separate App for local development. This application's device authorization is handled by Better Auth; GitHub's Device Flow setting is not required. Keep the plugin's service origin in sync with the production origin. `SUPPORT_URL` remains empty until the operator configures a public contact URL.
+The production origin is `https://my-micro.ikekou-20f.workers.dev`. Register `https://my-micro.ikekou-20f.workers.dev/api/auth/callback/github` as the GitHub OAuth callback and use that App's credentials in production. Keep the local callback registered too, or use a separate App for local development. This application's device authorization is handled by Better Auth; GitHub's Device Flow setting is not required. Keep the plugin's service origin in sync with the production origin. The operator selected `https://github.com/ikekou/my-micro/issues` for production `SUPPORT_URL`.
 
 Run the following from `apps/web`, after checking the intended account and database:
 

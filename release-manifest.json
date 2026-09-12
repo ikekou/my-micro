@@ -2,7 +2,7 @@
   "files": [
     {
       "path": "README.md",
-      "sha256": "085f30d25b653e5c0882f1b481278a5a576b7d725d83ef21029d7545df34e31e"
+      "sha256": "b2056cd1bf24b3d389d4b91999ad7f80549f75f1c5d9eb8fb01af1a2905d4696"
     },
     {
       "path": "LICENSE",
@@ -142,7 +142,7 @@
     },
     {
       "path": "apps/web/app/server/auth.ts",
-      "sha256": "21b8ae8c2867c35d72f2fc85298dcfb24c51f8dfec8c1310fa938fd6ee644ba9"
+      "sha256": "a54821012d323ff3eda80f37474afca87064e9b038a10208475c1e15381cdeda"
     },
     {
       "path": "apps/web/app/server/http.ts",
@@ -178,7 +178,7 @@
     },
     {
       "path": "apps/web/tests/server/api.test.ts",
-      "sha256": "190d0771601c69398aee025d4eef548230ae7975a06b5420de0217c0731c5a8e"
+      "sha256": "9088a8643314bf92feabc2b1f92cffeabd593d150ad520312cea5ea30513c704"
     },
     {
       "path": "apps/web/tests/ui/document-paths.test.ts",
@@ -322,7 +322,7 @@
     },
     {
       "path": "docs/server-setup.md",
-      "sha256": "efd9583e333e5c61404f40cc2df9efc1daf8ac65b3f959b5e1c151f56e7bbd04"
+      "sha256": "922aae2b49360fe918e96060f851af9e18a13fe371faf2bc9c16aeac87392b54"
     },
     {
       "path": "docs/release.md",

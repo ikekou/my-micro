@@ -78,6 +78,60 @@ test("D1 migration matches the installed Better Auth configuration", async () =>
   assert.deepEqual(migration.schemaProblems, []);
 });
 
+test("GitHub OAuth callback creates a session with the provider login, never browser-supplied names", async (t) => {
+  const githubLogin = "synthetic-oauth-user";
+  const githubEmail = "synthetic-oauth-user@example.invalid";
+  const githubToken = "synthetic-provider-token-with-no-real-access";
+  const providerRequests: string[] = [];
+  const originalFetch = globalThis.fetch;
+  t.mock.method(globalThis, "fetch", async (input: RequestInfo | URL, init?: RequestInit): Promise<Response> => {
+    const url = new URL(input instanceof Request ? input.url : String(input));
+    if (["localhost", "127.0.0.1", "[::1]"].includes(url.hostname)) return originalFetch(input, init);
+    providerRequests.push(url.href);
+    if (url.href === "https://github.com/login/oauth/access_token") {
+      return Response.json({ access_token: githubToken, token_type: "bearer", scope: "read:user,user:email" });
+    }
+    const requestHeaders = new Headers(input instanceof Request ? input.headers : init?.headers);
+    assert.equal(requestHeaders.get("authorization"), `Bearer ${githubToken}`);
+    if (url.href === "https://api.github.com/user") {
+      return Response.json({ id: 9990001, login: githubLogin, name: "Private OAuth Full Name", email: null, avatar_url: "https://avatars.githubusercontent.com/u/9990001" });
+    }
+    if (url.href === "https://api.github.com/user/emails") {
+      return Response.json([{ email: githubEmail, primary: true, verified: true }]);
+    }
+    throw new Error(`Unexpected outbound OAuth request: ${url.origin}${url.pathname}`);
+  });
+  const signIn = await call("/api/auth/sign-in/social", {
+    method: "POST", headers: { Origin: origin, "Content-Type": "application/json" },
+    body: JSON.stringify({ provider: "github", callbackURL: `${origin}/account`, errorCallbackURL: `${origin}/login`, disableRedirect: true,
+      username: "forged-browser-login", name: "Forged browser name", additionalData: { username: "forged-state-login" } }),
+  });
+  assert.equal(signIn.status, 200, await signIn.clone().text());
+  const authorize = new URL((await signIn.json() as { url: string }).url);
+  assert.equal(authorize.origin, "https://github.com");
+  assert.equal(authorize.searchParams.get("redirect_uri"), `${origin}/api/auth/callback/github`);
+  const state = authorize.searchParams.get("state");
+  assert(state);
+  const stateCookie = signIn.headers.getSetCookie().map((cookie) => cookie.split(";")[0]).join("; ");
+  assert(stateCookie);
+  const callback = await call(`/api/auth/callback/github?code=synthetic-code&state=${encodeURIComponent(state)}`, {
+    headers: { Cookie: stateCookie, "Sec-Fetch-Site": "cross-site" },
+  });
+  assert.equal(callback.status, 302);
+  assert.equal(callback.headers.get("location"), `${origin}/account`);
+  assert.deepEqual(providerRequests, ["https://github.com/login/oauth/access_token", "https://api.github.com/user", "https://api.github.com/user/emails"]);
+  const sessionCookie = callback.headers.getSetCookie().map((cookie) => cookie.split(";")[0]).join("; ");
+  const me = await call("/api/v1/me", { headers: { Cookie: sessionCookie } });
+  const publicUser = (await me.json() as { user: { id: string; username: string; avatarUrl: string } }).user;
+  assert(publicUser);
+  assert.equal(publicUser.username, githubLogin);
+  assert.deepEqual(Object.keys(publicUser).sort(), ["avatarUrl", "id", "username"]);
+  const stored = await env.DB.prepare("SELECT name, username FROM user WHERE id = ?").bind(publicUser.id).first();
+  assert.deepEqual(stored, { name: githubLogin, username: githubLogin });
+  assert.equal((await call("/api/auth/update-user", { method: "POST", headers: { Cookie: sessionCookie, Origin: origin, "Content-Type": "application/json" }, body: JSON.stringify({ username: "forged-browser-login" }) })).status, 404);
+  assert.equal((await env.DB.prepare("SELECT username FROM user WHERE id = ?").bind(publicUser.id).first<{ username: string }>())?.username, githubLogin);
+});
+
 test("public replies contain only public author fields and reject unknown settings", async () => {
   const post = await publish();
   assert.deepEqual(Object.keys(post.author).sort(), ["avatarUrl", "id", "username"]);

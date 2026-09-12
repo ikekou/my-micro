@@ -33,7 +33,9 @@ export function createAuth(env: Env) {
         mapProfileToUser: (profile) => ({ username: profile.login, name: profile.login }),
       },
     },
-    user: { additionalFields: { username: { type: "string", required: true, input: false } } },
+    // Better Auth also filters provider mappings through `input`; false drops GitHub login.
+    // The API allowlist excludes user signup/update endpoints, so browsers cannot set it.
+    user: { additionalFields: { username: { type: "string", required: true, input: true } } },
     session: { expiresIn: 60 * 60 * 24 * 30, updateAge: 60 * 60 * 24, cookieCache: { enabled: false } },
     advanced: {
       ipAddress: { ipAddressHeaders: ["cf-connecting-ip"] },
