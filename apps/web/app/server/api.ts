@@ -1,7 +1,7 @@
 import { postInputSchema, postUpdateSchema } from "@my-micro/shared";
 import { authenticationHeaders, createAuth, getSession, requireSession } from "./auth";
 import { ApiError, boundedBody, checkWriteOrigin, errorResponse, json, readJson } from "./http";
-import { assertCanWrite, createPost, deletePost, getPost, listPosts, publicAuthor, updatePost } from "./posts";
+import { assertCanWrite, createPost, deletePost, getOwnedPost, getPost, listPosts, publicAuthor, updatePost } from "./posts";
 import { enforceRate } from "./rate-limit";
 
 const authRoutes = new Map([
@@ -62,6 +62,11 @@ async function dispatch(request: Request, env: Env): Promise<Response> {
     if (path === "/api/v1/me/posts") {
       const session = await requireSession(request, env);
       return json(await listPosts(env.DB, url, session.user.id));
+    }
+    const ownedPostId = path.startsWith("/api/v1/me/posts/") ? idFromPath(path, "/api/v1/me/posts/") : null;
+    if (ownedPostId) {
+      const session = await requireSession(request, env);
+      return json({ post: await getOwnedPost(env.DB, session.user.id, ownedPostId) });
     }
     if (path === "/api/v1/me/sessions") {
       const session = await requireSession(request, env);

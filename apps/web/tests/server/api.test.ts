@@ -5,7 +5,7 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { ApiClient } from "../../../../packages/collector/src/api";
 import { CredentialStore } from "../../../../packages/collector/src/storage";
-import { bindCreateDraft, createDraft, publishDraft } from "../../../../packages/collector/src/draft";
+import { bindCreateDraft, createDraft, ownedPost, publishDraft } from "../../../../packages/collector/src/draft";
 import { Miniflare, convertV4MiniflareOptions } from "miniflare";
 import { getMigrations } from "better-auth/db/migration";
 import { createFixturePostInput } from "@my-micro/shared/fixtures";
@@ -331,4 +331,33 @@ test("a valid signed browser cookie works; an invalid bearer never falls back to
   } });
   assert.equal(invalidBearer.status, 401);
   assert.equal((await call(`/api/v1/posts/${post.id}`)).status, 200);
+});
+
+test("owners can prepare deletion of hidden posts without exposing or updating them", async () => {
+  const post = await publish();
+  await env.DB.prepare("UPDATE posts SET hidden_at = ? WHERE id = ?").bind(Date.now(), post.id).run();
+  const path = `/api/v1/me/posts/${post.id}`;
+  assert.equal((await call(path)).status, 401);
+  assert.equal((await call(path, { headers: headers(bobToken) })).status, 404);
+  assert.equal((await call(`/api/v1/posts/${post.id}`)).status, 404);
+  const own = await call(path, { headers: headers() });
+  assert.equal(own.status, 200);
+  assert.deepEqual((await own.json() as {post:PublicPost}).post, post);
+  assert.equal((await call(`/api/v1/posts/${post.id}`, { method:"PATCH", headers:headers(), body:JSON.stringify({...createFixturePostInput(),version:1}) })).status, 404);
+  const directory = await mkdtemp(join(tmpdir(), "my-micro-hidden-client-"));
+  try {
+    const store = new CredentialStore(directory);
+    await store.save({origin, token:aliceToken, expiresAt:Date.now()+86_400_000});
+    const client = new ApiClient(origin, store, async (url,init) => {
+      const response = await handleApi(new Request(String(url),init),env);assert(response);return response;
+    });
+    await assert.rejects(() => ownedPost(client,post.id), /POST_NOT_FOUND/);
+    const target = await ownedPost(client,post.id,{includeHidden:true});
+    const draft = await createDraft({title:target.title,description:target.description,settings:target.settings},origin,
+      {kind:'delete',id:target.id,version:target.version,ownerId:target.author.id});
+    assert.deepEqual(await publishDraft(draft,draft.approvalHash,client),{deleted:true,id:post.id});
+    assert.equal((await call(path, {headers:headers()})).status,404);
+    const row = await env.DB.prepare("SELECT settings, deleted_at FROM posts WHERE id = ?").bind(post.id).first<{settings:string|null;deleted_at:number|null}>();
+    assert.equal(row?.settings,null);assert.notEqual(row?.deleted_at,null);
+  } finally { await rm(directory,{recursive:true,force:true}); }
 });

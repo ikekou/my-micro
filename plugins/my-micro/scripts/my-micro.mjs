@@ -20935,9 +20935,9 @@ function parsePost(value) {
 function inputOf(post) {
   return { title: post.title, description: post.description, settings: post.settings };
 }
-async function ownedPost(client, target) {
+async function ownedPost(client, target, options = {}) {
   if (!id.safeParse(target).success) fail("INVALID_POST_ID", "The post ID is invalid.");
-  const post = parsePost(await client.request(`/api/v1/posts/${target}`));
+  const post = parsePost(await client.request(options.includeHidden ? `/api/v1/me/posts/${target}` : `/api/v1/posts/${target}`, {}, !!options.includeHidden));
   const me = await client.request("/api/v1/me", {}, true);
   if (!me.user?.id) fail("AUTH_REQUIRED", "This My Micro connection is no longer valid. Sign in again.");
   if (me.user.id !== post.author.id) fail("NOT_OWNER", "This post is not owned by the signed-in account.");
@@ -20962,7 +20962,7 @@ async function publishDraft(draft, confirmation, client = new ApiClient(draft.se
       else throw error62;
     }
     try {
-      await client.request(`/api/v1/posts/${target.id}`);
+      await client.request(`/api/v1/me/posts/${target.id}`, {}, true);
     } catch (error62) {
       if (error62 instanceof MicroError && ["POST_NOT_FOUND", "NOT_FOUND"].includes(error62.code)) return { deleted: true, id: target.id, ...alreadyApplied ? { alreadyApplied: true } : {} };
       throw error62;
@@ -21085,7 +21085,7 @@ async function main() {
     }
     case "delete-draft": {
       const client = new ApiClient(await origin());
-      const post = await ownedPost(client, required2("post"));
+      const post = await ownedPost(client, required2("post"), { includeHidden: true });
       const draft = await createDraft({ title: post.title, description: post.description, settings: post.settings }, client.origin, { kind: "delete", id: post.id, version: post.version, ownerId: post.author.id });
       await saveDraft(required2("out"), draft);
       output2(previewDraft(draft));

@@ -82,7 +82,7 @@ async function main() {
     }
     case 'delete-draft': {
       const client = new ApiClient(await origin());
-      const post = await ownedPost(client,required('post'));
+      const post = await ownedPost(client,required('post'),{includeHidden:true});
       const draft = await createDraft({title:post.title,description:post.description,settings:post.settings},client.origin,{kind:'delete',id:post.id,version:post.version,ownerId:post.author.id});
       await saveDraft(required('out'),draft); output(previewDraft(draft)); return;
     }

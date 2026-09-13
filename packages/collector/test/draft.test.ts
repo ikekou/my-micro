@@ -107,3 +107,17 @@ test('read-back with a different author never reports a successful publication',
  const api=await client((async url=>Response.json(String(url).endsWith('/me')?{user:{id:'user-1'}}:{post:{...post(),author:{id:'user-2',username:'second',avatarUrl:null}}})) as Fetch);
  await assert.rejects(()=>publishDraft(draft,draft.approvalHash,api),/differs from the confirmed draft/);
 });
+
+test('deletion verifies the owner view because public absence can mean moderation',async()=>{
+ const draft=await createDraft(input,origin,{kind:'delete',id:'post-1',version:1,ownerId:'user-1'});
+ const api=await client((async(url,init)=>{
+  if(String(url).endsWith('/me'))return Response.json({user:{id:'user-1'}});
+  if(init?.method==='DELETE')return new Response(null,{status:204});
+  if(String(url).includes('/me/posts/')) {
+   assert.equal(new Headers(init?.headers).get('Authorization'),'Bearer PRIVATE_BEARER');
+   return Response.json({post:post()});
+  }
+  return Response.json({error:{code:'POST_NOT_FOUND'}},{status:404});
+ }) as Fetch);
+ await assert.rejects(()=>publishDraft(draft,draft.approvalHash,api),/could still be read/);
+});

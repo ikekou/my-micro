@@ -50,9 +50,9 @@ export function parsePost(value: unknown): PublicPost {
   return response.data.post;
 }
 function inputOf(post: PublicPost): PostInput { return {title:post.title,description:post.description,settings:post.settings}; }
-export async function ownedPost(client: ApiClient, target: string): Promise<PublicPost> {
+export async function ownedPost(client: ApiClient, target: string, options: {includeHidden?:boolean} = {}): Promise<PublicPost> {
   if (!id.safeParse(target).success) fail('INVALID_POST_ID','The post ID is invalid.');
-  const post = parsePost(await client.request(`/api/v1/posts/${target}`));
+  const post = parsePost(await client.request(options.includeHidden ? `/api/v1/me/posts/${target}` : `/api/v1/posts/${target}`,{},!!options.includeHidden));
   const me = await client.request('/api/v1/me',{},true) as {user?:{id?:string}};
   if (!me.user?.id) fail('AUTH_REQUIRED','This My Micro connection is no longer valid. Sign in again.');
   if (me.user.id !== post.author.id) fail('NOT_OWNER','This post is not owned by the signed-in account.');
@@ -75,7 +75,7 @@ export async function publishDraft(draft: Draft, confirmation: string, client = 
       if (error instanceof MicroError && error.code === 'POST_NOT_FOUND') alreadyApplied = true;
       else throw error;
     }
-    try { await client.request(`/api/v1/posts/${target.id}`); }
+    try { await client.request(`/api/v1/me/posts/${target.id}`,{},true); }
     catch (error) {
       if (error instanceof MicroError && ['POST_NOT_FOUND','NOT_FOUND'].includes(error.code)) return {deleted:true,id:target.id,...(alreadyApplied ? {alreadyApplied:true} : {})};
       throw error;

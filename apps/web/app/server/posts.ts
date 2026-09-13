@@ -94,6 +94,13 @@ export async function getPost(db: D1Database, id: string): Promise<PublicPost> {
   return publicPost(row);
 }
 
+/** Owners can review hidden content for deletion; public reads still exclude it. */
+export async function getOwnedPost(db: D1Database, userId: string, id: string): Promise<PublicPost> {
+  const row = await db.prepare(`${select} WHERE p.id = ? AND p.user_id = ? AND p.deleted_at IS NULL`).bind(id, userId).first<PostRow>();
+  if (!row) throw new ApiError(404, "POST_NOT_FOUND", "This Micro could not be found.");
+  return publicPost(row);
+}
+
 export async function assertCanWrite(db: D1Database, userId: string): Promise<void> {
   if (await db.prepare("SELECT user_id FROM blocked_users WHERE user_id = ?").bind(userId).first()) {
     throw new ApiError(403, "WRITES_DISABLED", "Posting is disabled for this account.");
