@@ -1,10 +1,12 @@
+import type { MetaFunction } from "react-router";
+import { socialMeta } from "../lib/social-meta";
 import { useLoaderData, type LoaderFunctionArgs } from "react-router";
 import { loadGallery } from "../lib/gallery.server";
 import { Gallery } from "../components/gallery";
 import { BackLink } from "../components/site-shell";
 import { useLocale, words } from "../lib/i18n";
 export { PageError as ErrorBoundary } from "../components/site-shell";
-export const meta = () => [{ title: "Shared Micros — My Micro" }];
+export const meta: MetaFunction<typeof loader> = (args) => socialMeta(args, { title: args.loaderData?.author ? `@${args.loaderData.author.username}’s Micros — My Micro` : "Shared Micros — My Micro", unavailable: !args.loaderData });
 export function loader({ request, params }: LoaderFunctionArgs) { return loadGallery(request, params.id); }
 export default function Author() {
   const { result, query, browsePath, author } = useLoaderData<typeof loader>();

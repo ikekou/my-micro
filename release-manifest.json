@@ -225,12 +225,16 @@
       "sha256": "52cf072ca80f55d65230c4c7c3737ed0031496dcbf06f26bcd2f95f8d165ea2b"
     },
     {
+      "path": "apps/web/app/lib/social-meta.ts",
+      "sha256": "ff858da980c25222280e6193a32e67ce71ebb27c53e4d1f06bf6f07ac94b101d"
+    },
+    {
       "path": "apps/web/app/root.tsx",
-      "sha256": "522d6fb90e930c7dc6b5fe08db3ecd97c5656b32a68bc50f3f1b8704a9ec664b"
+      "sha256": "dac8aafa7f085640d0a12ee65b2969f7a43f725397885e5b26205dae0ff44e6d"
     },
     {
       "path": "apps/web/app/routes/about.tsx",
-      "sha256": "8c403f79ed13d224fcce9cfd200d56dbfe551fe792c9475bd3056ffe623341ff"
+      "sha256": "3dec95a0c6551e33155509d68715e767a80f53e83dcb72177e4c4002356eabb2"
     },
     {
       "path": "apps/web/app/routes/account.tsx",
@@ -238,7 +242,7 @@
     },
     {
       "path": "apps/web/app/routes/author.tsx",
-      "sha256": "8c66ffdb9c09da959e1399721994e2d392efe6787a54d6b4a567aab6be7e8e0b"
+      "sha256": "9e7f6a09f4143512e817715fe8d2f5ba05b9f2b749fc87a58cff42fd55b28381"
     },
     {
       "path": "apps/web/app/routes/device.tsx",
@@ -246,7 +250,7 @@
     },
     {
       "path": "apps/web/app/routes/home.tsx",
-      "sha256": "90f32dfd497bbb4c49ec710eb9d10a3d552a0ac16324bded44ce07dcb3e51654"
+      "sha256": "6973e938a8b9eda3e88869455b56e5b480eab5209674259bc500c1644ea1b316"
     },
     {
       "path": "apps/web/app/routes/login.tsx",
@@ -262,11 +266,11 @@
     },
     {
       "path": "apps/web/app/routes/post.tsx",
-      "sha256": "1dcf6a5dcb3e1b9506515dac503ccd4af2943311fc9abb0cc5dc84fa76b90cb3"
+      "sha256": "3913ad33ae5dbccf8012c0fb84efe58407839882689e866e9c813314268708bc"
     },
     {
       "path": "apps/web/app/routes/share.tsx",
-      "sha256": "994877c43cbbf80764f05373c02daf557794558b3a4edbcb29735d16358e8b3e"
+      "sha256": "9e5f8de25c2177fb8e554a2d4bd4ba8ac2aab3d8a6834429815de2099bb3355f"
     },
     {
       "path": "apps/web/app/routes.ts",
@@ -305,6 +309,18 @@
       "sha256": "baec10bb13bee39d899c0ccf6d6ff18a18591463d462afa5562459f5f5aea09d"
     },
     {
+      "path": "apps/web/public/social/README.md",
+      "sha256": "7eeb3d15251eec1d952d552ddc1fdd3bed4091849d4dc08ba6b86a8bfcf550aa"
+    },
+    {
+      "path": "apps/web/public/social/my-micro.png",
+      "sha256": "bfbeefe354351da80e6f273c0a306cf7c2646830667664e915f7c815b413d36d"
+    },
+    {
+      "path": "apps/web/public/social/my-micro.svg",
+      "sha256": "99089b02ec6a1ba725913c5c3db877eedd32c39c8d36caac74cae742c9c7bd8c"
+    },
+    {
       "path": "apps/web/migrations/0001_auth.sql",
       "sha256": "0cc09a2fc202a83e5ef8de0865301c6d0fd5b1e03e80b8d91acb656f23aee55d"
     },
@@ -327,6 +343,10 @@
     {
       "path": "apps/web/tests/ui/route-utils.test.ts",
       "sha256": "d23f47d310962388b07e15f5061cfba57e8a9ad427d93d6dff4d416d564e1958"
+    },
+    {
+      "path": "apps/web/tests/ui/social-meta.test.ts",
+      "sha256": "d289a0ae02e00ca9f8597fd32f4cf06c517b8d001eb341de6456bed621fce0a8"
     },
     {
       "path": "apps/web/package.json",

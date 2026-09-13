@@ -1,3 +1,4 @@
+import { socialMeta } from "../lib/social-meta";
 import { Link, useLoaderData, useLocation, type LoaderFunctionArgs, type MetaFunction } from "react-router";
 import type { PublicPost } from "@my-micro/shared";
 import { apiData } from "../lib/api.server";
@@ -7,7 +8,7 @@ import { BackLink } from "../components/site-shell";
 import { Icon } from "../components/icon";
 export { PageError as ErrorBoundary } from "../components/site-shell";
 export function loader({ request, params }: LoaderFunctionArgs) { return apiData<{ post: PublicPost }>(request, `/api/v1/posts/${encodeURIComponent(params.id ?? "")}`); }
-export const meta: MetaFunction<typeof loader> = ({ loaderData }) => [{ title: loaderData ? `${loaderData.post.title} — My Micro` : "My Micro" }, { name: "description", content: loaderData?.post.description.slice(0, 160) ?? "A Codex Micro setup." }];
+export const meta: MetaFunction<typeof loader> = (args) => socialMeta(args, { title: args.loaderData ? `${args.loaderData.post.title} — My Micro` : "Post unavailable — My Micro", description: args.loaderData?.post.description || (args.loaderData ? `Explore @${args.loaderData.post.author.username}’s Codex Micro setup.` : undefined), unavailable: !args.loaderData });
 export default function Post() {
   const { post } = useLoaderData<typeof loader>();
   const locale = useLocale();

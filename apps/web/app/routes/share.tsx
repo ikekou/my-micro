@@ -1,3 +1,5 @@
+import type { MetaFunction } from "react-router";
+import { socialMeta } from "../lib/social-meta";
 import { Link, useLoaderData, type LoaderFunctionArgs } from "react-router";
 import { REPOSITORY_URL } from "@my-micro/shared";
 import { useLocale, words, localHref } from "../lib/i18n";
@@ -6,7 +8,7 @@ import { CopyPrompt } from "../components/copy-prompt";
 import { BackLink } from "../components/site-shell";
 import { Icon } from "../components/icon";
 
-export const meta = () => [{ title: "Share your Micro — My Micro" }];
+export const meta: MetaFunction = (args) => socialMeta(args, { title: "Share your Micro — My Micro" });
 export function loader({ request }: LoaderFunctionArgs) { return { siteUrl: new URL(request.url).origin }; }
 export default function Share() {
   const locale = useLocale();

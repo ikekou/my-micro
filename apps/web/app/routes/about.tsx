@@ -1,10 +1,12 @@
+import type { MetaFunction } from "react-router";
+import { socialMeta } from "../lib/social-meta";
 import { Link, useLoaderData } from "react-router";
 import { env } from "cloudflare:workers";
 import { REPOSITORY_URL } from "@my-micro/shared";
 import { useLocale, words, localHref } from "../lib/i18n";
 import { BackLink } from "../components/site-shell";
 
-export const meta = () => [{ title: "About & privacy — My Micro" }];
+export const meta: MetaFunction = (args) => socialMeta(args, { title: "About & privacy — My Micro" });
 export function loader() {
   let supportUrl: string | null = null;
   try { const url = new URL(env.SUPPORT_URL); if (url.protocol === "https:" || url.protocol === "mailto:") supportUrl = url.href; } catch { /* A public contact is configured before launch, never inferred. */ }

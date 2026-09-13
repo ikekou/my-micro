@@ -12,7 +12,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
   let authAvailable = true;
   try { user = (await apiData<{ user: PublicAuthor | null }>(request, "/api/v1/me")).user; }
   catch { authAvailable = false; }
-  return data({ locale, user, authAvailable }, { headers: { "Set-Cookie": `my-micro-lang=${locale}; Path=/; Max-Age=31536000; SameSite=Lax${new URL(request.url).protocol === "https:" ? "; Secure" : ""}`, "Cache-Control": "private, no-store" } });
+  return data({ locale, user, authAvailable, origin: new URL(request.url).origin }, { headers: { "Set-Cookie": `my-micro-lang=${locale}; Path=/; Max-Age=31536000; SameSite=Lax${new URL(request.url).protocol === "https:" ? "; Secure" : ""}`, "Cache-Control": "private, no-store" } });
 }
 export function Layout({ children }: { children: React.ReactNode }) {
   const { locale } = useSite();

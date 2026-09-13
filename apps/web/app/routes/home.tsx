@@ -1,9 +1,11 @@
+import type { MetaFunction } from "react-router";
+import { socialMeta } from "../lib/social-meta";
 import { useLoaderData, type LoaderFunctionArgs } from "react-router";
 import { loadGallery } from "../lib/gallery.server";
 import { useLocale, words } from "../lib/i18n";
 import { Gallery } from "../components/gallery";
 export { PageError as ErrorBoundary } from "../components/site-shell";
-export const meta = () => [{ title: "My Micro — a gallery of Codex Micro setups" }, { name: "description", content: "Explore the ways people make Codex Micro their own. Layouts, shortcuts, and the little details." }];
+export const meta: MetaFunction = (args) => socialMeta(args);
 export function loader({ request }: LoaderFunctionArgs) { return loadGallery(request); }
 export default function Home() {
   const locale = useLocale();
