@@ -1,7 +1,7 @@
 import { setTimeout as delay } from 'node:timers/promises';
 import { z } from 'zod';
 import { DEVICE_CLIENT_ID } from '@my-micro/shared';
-import { CredentialStore, serviceOrigin } from './storage.js';
+import { CredentialStore, serviceOrigin, type Credentials } from './storage.js';
 import { fail, MicroError } from './errors.js';
 
 export type Fetch = typeof fetch;
@@ -10,13 +10,19 @@ const tokenSchema = z.object({access_token:z.string().min(1).max(8192),expires_i
 const knownErrors = new Set(['authorization_pending','slow_down','access_denied','expired_token','invalid_grant','invalid_client','UNAUTHORIZED','FORBIDDEN','NOT_FOUND','CONFLICT','RATE_LIMITED','VALIDATION_ERROR','INVALID_INPUT','IDEMPOTENCY_CONFLICT','INVALID_VERSION','VERSION_CONFLICT','POST_NOT_FOUND','POST_DELETED','POST_HIDDEN','WRITES_DISABLED','AUTH_NOT_CONFIGURED','AUTH_REQUIRED','INVALID_POST','VERSION_REQUIRED','IDEMPOTENCY_KEY_REQUIRED','ORIGIN_REJECTED']);
 export class ApiClient {
   readonly origin: string;
-  constructor(origin: string, readonly store = new CredentialStore(), private transport: Fetch = fetch) { this.origin = serviceOrigin(origin); }
+  constructor(origin: string, readonly store = new CredentialStore(), private transport: Fetch = fetch, private credentials?: Credentials) { this.origin = serviceOrigin(origin); }
+  async withCurrentCredentials(): Promise<ApiClient> {
+    const credentials = this.credentials ?? await this.store.load(this.origin);
+    if (!credentials || credentials.expiresAt <= Date.now()) fail('AUTH_REQUIRED','Sign in to My Micro before continuing.');
+    // Keep identity checks and subsequent writes on the same connection.
+    return new ApiClient(this.origin,this.store,this.transport,{...credentials});
+  }
   async request(path: string, init: RequestInit = {}, authenticated = false): Promise<unknown> {
     if (!path.startsWith('/') || path.startsWith('//')) fail('INVALID_REQUEST','Invalid My Micro API path.');
     const headers = new Headers(init.headers);
     if (init.body) headers.set('Content-Type','application/json');
     if (authenticated) {
-      const credentials = await this.store.load(this.origin);
+      const credentials = this.credentials ?? await this.store.load(this.origin);
       if (!credentials || credentials.expiresAt <= Date.now()) fail('AUTH_REQUIRED','Sign in to My Micro before continuing.');
       headers.set('Authorization',`Bearer ${credentials.token}`);
     }

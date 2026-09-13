@@ -20763,21 +20763,28 @@ var CredentialStore = class {
 var deviceSchema = external_exports.object({ device_code: external_exports.string().min(1).max(8192), user_code: external_exports.string().min(1).max(32), verification_uri: external_exports.string(), verification_uri_complete: external_exports.string().optional(), expires_in: external_exports.number().int().positive().max(3600), interval: external_exports.number().int().positive().max(60).default(5) });
 var tokenSchema = external_exports.object({ access_token: external_exports.string().min(1).max(8192), expires_in: external_exports.number().int().positive(), token_type: external_exports.string().optional() });
 var knownErrors = /* @__PURE__ */ new Set(["authorization_pending", "slow_down", "access_denied", "expired_token", "invalid_grant", "invalid_client", "UNAUTHORIZED", "FORBIDDEN", "NOT_FOUND", "CONFLICT", "RATE_LIMITED", "VALIDATION_ERROR", "INVALID_INPUT", "IDEMPOTENCY_CONFLICT", "INVALID_VERSION", "VERSION_CONFLICT", "POST_NOT_FOUND", "POST_DELETED", "POST_HIDDEN", "WRITES_DISABLED", "AUTH_NOT_CONFIGURED", "AUTH_REQUIRED", "INVALID_POST", "VERSION_REQUIRED", "IDEMPOTENCY_KEY_REQUIRED", "ORIGIN_REJECTED"]);
-var ApiClient = class {
-  constructor(origin, store = new CredentialStore(), transport = fetch) {
+var ApiClient = class _ApiClient {
+  constructor(origin, store = new CredentialStore(), transport = fetch, credentials) {
     this.store = store;
     this.transport = transport;
+    this.credentials = credentials;
     this.origin = serviceOrigin(origin);
   }
   store;
   transport;
+  credentials;
   origin;
+  async withCurrentCredentials() {
+    const credentials = this.credentials ?? await this.store.load(this.origin);
+    if (!credentials || credentials.expiresAt <= Date.now()) fail("AUTH_REQUIRED", "Sign in to My Micro before continuing.");
+    return new _ApiClient(this.origin, this.store, this.transport, { ...credentials });
+  }
   async request(path, init = {}, authenticated = false) {
     if (!path.startsWith("/") || path.startsWith("//")) fail("INVALID_REQUEST", "Invalid My Micro API path.");
     const headers = new Headers(init.headers);
     if (init.body) headers.set("Content-Type", "application/json");
     if (authenticated) {
-      const credentials = await this.store.load(this.origin);
+      const credentials = this.credentials ?? await this.store.load(this.origin);
       if (!credentials || credentials.expiresAt <= Date.now()) fail("AUTH_REQUIRED", "Sign in to My Micro before continuing.");
       headers.set("Authorization", `Bearer ${credentials.token}`);
     }
@@ -20882,7 +20889,7 @@ var ApiClient = class {
 var id = external_exports.string().regex(/^[A-Za-z0-9_-]{1,100}$/);
 var hash2 = external_exports.string().regex(/^[a-f0-9]{64}$/);
 var operationSchema = external_exports.discriminatedUnion("kind", [
-  external_exports.object({ kind: external_exports.literal("create") }).strict(),
+  external_exports.object({ kind: external_exports.literal("create"), owner: external_exports.object({ id, username: external_exports.string().min(1).max(100) }).strict().optional() }).strict(),
   external_exports.object({ kind: external_exports.literal("update"), id, version: external_exports.number().int().positive(), ownerId: id }).strict(),
   external_exports.object({ kind: external_exports.literal("delete"), id, version: external_exports.number().int().positive(), ownerId: id }).strict()
 ]);
@@ -20906,8 +20913,18 @@ async function readDraft(path) {
 async function saveDraft(path, draft) {
   await writePrivate(path, draft);
 }
+async function bindCreateDraft(draft, client = new ApiClient(draft.serviceOrigin)) {
+  const { approvalHash: stored, ...content } = draft;
+  if (approvalHash(content) !== stored || await snapshotHash(draft.input) !== draft.contentHash || client.origin !== draft.serviceOrigin) fail("DRAFT_CHANGED", "Create and preview a valid draft before binding an account.");
+  if (draft.operation.kind !== "create") fail("INVALID_OPERATION", "Only new-post drafts need account binding.");
+  const me = external_exports.object({ user: external_exports.object({ id, username: external_exports.string().min(1).max(100) }) }).safeParse(await client.request("/api/v1/me", {}, true));
+  if (!me.success) fail("AUTH_REQUIRED", "This My Micro connection is no longer valid. Sign in again.");
+  if (draft.operation.owner && draft.operation.owner.id !== me.data.user.id) fail("ACCOUNT_CHANGED", "This draft is already bound to another account. Switch back or create a new draft.");
+  const bound = draftContentSchema.parse({ ...content, operation: { kind: "create", owner: me.data.user } });
+  return { ...bound, approvalHash: approvalHash(bound) };
+}
 function previewDraft(draft) {
-  return { operation: draft.operation, serviceOrigin: draft.serviceOrigin, approvalHash: draft.approvalHash, contentHash: draft.contentHash, publicContent: draft.input };
+  return { operation: draft.operation, accountBindingRequired: draft.operation.kind === "create" && !draft.operation.owner, serviceOrigin: draft.serviceOrigin, approvalHash: draft.approvalHash, contentHash: draft.contentHash, publicContent: draft.input };
 }
 var postSchema = postInputSchema.extend({ id, author: external_exports.object({ id: external_exports.string(), username: external_exports.string(), avatarUrl: external_exports.string().nullable() }), version: external_exports.number().int().positive(), createdAt: external_exports.string(), updatedAt: external_exports.string() });
 function parsePost(value) {
@@ -20930,11 +20947,12 @@ async function publishDraft(draft, confirmation, client = new ApiClient(draft.se
   const { approvalHash: stored, ...content } = draft;
   if (confirmation !== stored || approvalHash(content) !== stored || await snapshotHash(draft.input) !== draft.contentHash || client.origin !== draft.serviceOrigin) fail("CONFIRMATION_REQUIRED", "Show this exact saved draft, then pass its approval hash only after the user explicitly confirms.");
   const target = draft.operation;
-  if (target.kind !== "create") {
-    const me = await client.request("/api/v1/me", {}, true);
-    if (!me.user?.id) fail("AUTH_REQUIRED", "This My Micro connection is no longer valid. Sign in again.");
-    if (me.user.id !== target.ownerId) fail("ACCOUNT_CHANGED", "The signed-in account differs from the owner in this preview. Switch accounts or create a new preview.");
-  }
+  const ownerId = target.kind === "create" ? target.owner?.id : target.ownerId;
+  if (!ownerId) fail("ACCOUNT_BINDING_REQUIRED", "Run bind-account on this draft, show the account and complete preview, and obtain approval of the new hash before publishing.");
+  client = await client.withCurrentCredentials();
+  const me = await client.request("/api/v1/me", {}, true);
+  if (!me.user?.id) fail("AUTH_REQUIRED", "This My Micro connection is no longer valid. Sign in again.");
+  if (me.user.id !== ownerId) fail("ACCOUNT_CHANGED", "The signed-in account differs from the owner in this preview. Switch accounts or create a new preview.");
   if (target.kind === "delete") {
     let alreadyApplied = false;
     try {
@@ -20964,7 +20982,7 @@ async function publishDraft(draft, confirmation, client = new ApiClient(draft.se
     body: JSON.stringify(target.kind === "create" ? draft.input : { ...draft.input, version: target.version })
   }, true));
   const readBack = parsePost(await client.request(`/api/v1/posts/${saved.id}`));
-  if (target.kind === "update" && readBack.id !== target.id || await snapshotHash(inputOf(readBack)) !== draft.contentHash) fail("READBACK_MISMATCH", "The write may have succeeded, but the saved post differs from the confirmed draft. Check the public post before continuing.");
+  if (saved.author.id !== ownerId || readBack.author.id !== ownerId || saved.id !== readBack.id || target.kind === "update" && readBack.id !== target.id || await snapshotHash(inputOf(readBack)) !== draft.contentHash) fail("READBACK_MISMATCH", "The write may have succeeded, but the saved post differs from the confirmed draft. Check the public post before continuing.");
   return { published: true, id: readBack.id, url: `${client.origin}/posts/${readBack.id}`, version: readBack.version };
 }
 
@@ -20975,6 +20993,7 @@ var HELP = `My Micro \u2014 local preview and confirmed publishing
   collect --out settings.json [--app path] [--config path]
   draft --settings settings.json --title text [--description text] --service origin --out draft.json [--post id]
   preview --draft draft.json
+  bind-account --draft draft.json --out final-draft.json
   publish --draft draft.json --confirm approvalHash
   login --service origin
   me --service origin
@@ -21040,6 +21059,12 @@ async function main() {
     case "preview":
       output2(previewDraft(await readDraft(required2("draft"))));
       return;
+    case "bind-account": {
+      const draft = await bindCreateDraft(await readDraft(required2("draft")));
+      await saveDraft(required2("out"), draft);
+      output2(previewDraft(draft));
+      return;
+    }
     case "publish":
       output2(await publishDraft(await readDraft(required2("draft")), required2("confirm")));
       return;

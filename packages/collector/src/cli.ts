@@ -4,7 +4,7 @@ import { parseArgs } from 'node:util';
 import { postInputSchema, microSettingsSchema } from '@my-micro/shared';
 import { collectLocal, detectApp } from './collect.js';
 import { SUPPORTED_APP } from './compatibility.js';
-import { createDraft, ownedPost, previewDraft, publishDraft, readDraft, saveDraft } from './draft.js';
+import { bindCreateDraft, createDraft, ownedPost, previewDraft, publishDraft, readDraft, saveDraft } from './draft.js';
 import { ApiClient } from './api.js';
 import { readPrivate, serviceOrigin, writePrivate } from './storage.js';
 import { fail, MicroError } from './errors.js';
@@ -15,6 +15,7 @@ const HELP = `My Micro — local preview and confirmed publishing
   collect --out settings.json [--app path] [--config path]
   draft --settings settings.json --title text [--description text] --service origin --out draft.json [--post id]
   preview --draft draft.json
+  bind-account --draft draft.json --out final-draft.json
   publish --draft draft.json --confirm approvalHash
   login --service origin
   me --service origin
@@ -66,6 +67,10 @@ async function main() {
       await saveDraft(required('out'),draft); output(previewDraft(draft)); return;
     }
     case 'preview': output(previewDraft(await readDraft(required('draft')))); return;
+    case 'bind-account': {
+      const draft = await bindCreateDraft(await readDraft(required('draft')));
+      await saveDraft(required('out'),draft); output(previewDraft(draft)); return;
+    }
     case 'publish': output(await publishDraft(await readDraft(required('draft')),required('confirm'))); return;
     case 'login': output(await new ApiClient(await origin()).login(output)); return;
     case 'logout': output(await new ApiClient(await origin()).logout()); return;

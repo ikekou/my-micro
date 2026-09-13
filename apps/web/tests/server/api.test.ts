@@ -5,7 +5,7 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { ApiClient } from "../../../../packages/collector/src/api";
 import { CredentialStore } from "../../../../packages/collector/src/storage";
-import { createDraft, publishDraft } from "../../../../packages/collector/src/draft";
+import { bindCreateDraft, createDraft, publishDraft } from "../../../../packages/collector/src/draft";
 import { Miniflare, convertV4MiniflareOptions } from "miniflare";
 import { getMigrations } from "better-auth/db/migration";
 import { createFixturePostInput } from "@my-micro/shared/fixtures";
@@ -288,7 +288,7 @@ test("bundled collector contracts compose with real D1: create/retry/update/dele
       assert(response);
       return response;
     });
-    const draft = await createDraft(createFixturePostInput(), origin);
+    const draft = await bindCreateDraft(await createDraft(createFixturePostInput(), origin), client);
     const created = await publishDraft(draft, draft.approvalHash, client);
     assert("published" in created && created.published);
     const repeated = await publishDraft(draft, draft.approvalHash, client);
@@ -303,8 +303,12 @@ test("bundled collector contracts compose with real D1: create/retry/update/dele
       { kind: "delete", id: created.id, version: 2, ownerId: aliceId });
     assert.deepEqual(await publishDraft(deletion, deletion.approvalHash, client), { deleted: true, id: created.id });
     assert.deepEqual(await publishDraft(deletion, deletion.approvalHash, client), { deleted: true, id: created.id, alreadyApplied: true });
+    const later = await bindCreateDraft(await createDraft(createFixturePostInput(), origin), client);
+    await store.save({ origin, token: bobToken, expiresAt: Date.now() + 86_400_000 });
+    await assert.rejects(() => publishDraft(later, later.approvalHash, client), /differs from the owner/);
+    assert.equal((await call("/api/v1/me/posts", { headers: headers(bobToken) }).then(r => r.json()) as PostPage).items.length, 0);
+    await store.save({ origin, token: aliceToken, expiresAt: Date.now() + 86_400_000 });
     await client.logout();
-    const later = await createDraft(createFixturePostInput(), origin);
     await assert.rejects(() => publishDraft(later, later.approvalHash, client), /Sign in/);
     assert.equal(await store.load(origin), null);
   } finally { await rm(directory, { recursive: true, force: true }); }

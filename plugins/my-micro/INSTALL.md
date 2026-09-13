@@ -52,8 +52,9 @@ scripts/run.sh collect --out /private/tmp/my-micro-settings.json
 scripts/run.sh draft --settings /private/tmp/my-micro-settings.json --title 'My Micro' --out /private/tmp/my-micro-draft.json
 scripts/run.sh preview --draft /private/tmp/my-micro-draft.json
 scripts/run.sh login
-# Run only after explicit approval of the complete preview:
-scripts/run.sh publish --draft /private/tmp/my-micro-draft.json --confirm <approvalHash>
+scripts/run.sh bind-account --draft /private/tmp/my-micro-draft.json --out /private/tmp/my-micro-final-draft.json
+# Show the account and complete final preview, then obtain explicit approval:
+scripts/run.sh publish --draft /private/tmp/my-micro-final-draft.json --confirm <approvalHash>
 scripts/run.sh logout
 ```
 

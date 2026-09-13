@@ -8,7 +8,7 @@ import { fail, MicroError } from './errors.js';
 const id = z.string().regex(/^[A-Za-z0-9_-]{1,100}$/);
 const hash = z.string().regex(/^[a-f0-9]{64}$/);
 const operationSchema = z.discriminatedUnion('kind',[
-  z.object({kind:z.literal('create')}).strict(),
+  z.object({kind:z.literal('create'),owner:z.object({id,username:z.string().min(1).max(100)}).strict().optional()}).strict(),
   z.object({kind:z.literal('update'),id,version:z.number().int().positive(),ownerId:id}).strict(),
   z.object({kind:z.literal('delete'),id,version:z.number().int().positive(),ownerId:id}).strict(),
 ]);
@@ -30,8 +30,18 @@ export async function readDraft(path: string): Promise<Draft> {
   return result.data;
 }
 export async function saveDraft(path: string, draft: Draft) { await writePrivate(path,draft); }
+export async function bindCreateDraft(draft: Draft, client = new ApiClient(draft.serviceOrigin)): Promise<Draft> {
+  const {approvalHash:stored,...content} = draft;
+  if (approvalHash(content) !== stored || await snapshotHash(draft.input) !== draft.contentHash || client.origin !== draft.serviceOrigin) fail('DRAFT_CHANGED','Create and preview a valid draft before binding an account.');
+  if (draft.operation.kind !== 'create') fail('INVALID_OPERATION','Only new-post drafts need account binding.');
+  const me = z.object({user:z.object({id,username:z.string().min(1).max(100)})}).safeParse(await client.request('/api/v1/me',{},true));
+  if (!me.success) fail('AUTH_REQUIRED','This My Micro connection is no longer valid. Sign in again.');
+  if (draft.operation.owner && draft.operation.owner.id !== me.data.user.id) fail('ACCOUNT_CHANGED','This draft is already bound to another account. Switch back or create a new draft.');
+  const bound = draftContentSchema.parse({...content,operation:{kind:'create',owner:me.data.user}});
+  return {...bound,approvalHash:approvalHash(bound)};
+}
 export function previewDraft(draft: Draft) {
-  return {operation:draft.operation,serviceOrigin:draft.serviceOrigin,approvalHash:draft.approvalHash,contentHash:draft.contentHash,publicContent:draft.input};
+  return {operation:draft.operation,accountBindingRequired:draft.operation.kind === 'create' && !draft.operation.owner,serviceOrigin:draft.serviceOrigin,approvalHash:draft.approvalHash,contentHash:draft.contentHash,publicContent:draft.input};
 }
 const postSchema = postInputSchema.extend({id,author:z.object({id:z.string(),username:z.string(),avatarUrl:z.string().nullable()}),version:z.number().int().positive(),createdAt:z.string(),updatedAt:z.string()});
 export function parsePost(value: unknown): PublicPost {
@@ -52,11 +62,12 @@ export async function publishDraft(draft: Draft, confirmation: string, client = 
   const {approvalHash:stored,...content} = draft;
   if (confirmation !== stored || approvalHash(content) !== stored || await snapshotHash(draft.input) !== draft.contentHash || client.origin !== draft.serviceOrigin) fail('CONFIRMATION_REQUIRED','Show this exact saved draft, then pass its approval hash only after the user explicitly confirms.');
   const target = draft.operation;
-  if (target.kind !== 'create') {
-    const me = await client.request('/api/v1/me',{},true) as {user?:{id?:string}};
-    if (!me.user?.id) fail('AUTH_REQUIRED','This My Micro connection is no longer valid. Sign in again.');
-    if (me.user.id !== target.ownerId) fail('ACCOUNT_CHANGED','The signed-in account differs from the owner in this preview. Switch accounts or create a new preview.');
-  }
+  const ownerId = target.kind === 'create' ? target.owner?.id : target.ownerId;
+  if (!ownerId) fail('ACCOUNT_BINDING_REQUIRED','Run bind-account on this draft, show the account and complete preview, and obtain approval of the new hash before publishing.');
+  client = await client.withCurrentCredentials();
+  const me = await client.request('/api/v1/me',{},true) as {user?:{id?:string}};
+  if (!me.user?.id) fail('AUTH_REQUIRED','This My Micro connection is no longer valid. Sign in again.');
+  if (me.user.id !== ownerId) fail('ACCOUNT_CHANGED','The signed-in account differs from the owner in this preview. Switch accounts or create a new preview.');
   if (target.kind === 'delete') {
     let alreadyApplied = false;
     try { await client.request(`/api/v1/posts/${target.id}`,{method:'DELETE',headers:{'If-Match':`"${target.version}"`}},true); }
@@ -83,6 +94,6 @@ export async function publishDraft(draft: Draft, confirmation: string, client = 
     body:JSON.stringify(target.kind === 'create' ? draft.input : {...draft.input,version:target.version}),
   },true));
   const readBack = parsePost(await client.request(`/api/v1/posts/${saved.id}`));
-  if ((target.kind === 'update' && readBack.id !== target.id) || await snapshotHash(inputOf(readBack)) !== draft.contentHash) fail('READBACK_MISMATCH','The write may have succeeded, but the saved post differs from the confirmed draft. Check the public post before continuing.');
+  if (saved.author.id !== ownerId || readBack.author.id !== ownerId || saved.id !== readBack.id || (target.kind === 'update' && readBack.id !== target.id) || await snapshotHash(inputOf(readBack)) !== draft.contentHash) fail('READBACK_MISMATCH','The write may have succeeded, but the saved post differs from the confirmed draft. Check the public post before continuing.');
   return {published:true,id:readBack.id,url:`${client.origin}/posts/${readBack.id}`,version:readBack.version};
 }
