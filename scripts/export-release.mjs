@@ -25,6 +25,7 @@ try {
 }
 const files = [];
 async function inspect(relative) {
+  if (path.basename(relative) === '.DS_Store') return;
   const absolute = path.join(root, relative);
   const stat = await lstat(absolute);
   if (stat.isSymbolicLink()) throw new Error(`Symlink is not allowed in release: ${relative}`);

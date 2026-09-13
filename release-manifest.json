@@ -29,10 +29,6 @@
       "sha256": "c4bef11988f3b6a75f50ce6d51f16e27afa03d146d96acc229a1be8fe89950e8"
     },
     {
-      "path": "apps/web/app/.DS_Store",
-      "sha256": "579a04978ff8b27632cf11b5a7d1b3116d244c0af377be959a82b934053ca29e"
-    },
-    {
       "path": "apps/web/app/app.css",
       "sha256": "580c3c6a13949be0784489b348f5aa26d9e784867ac029d4b9aaa7ded084725d"
     },
@@ -238,7 +234,7 @@
     },
     {
       "path": "apps/web/app/routes/account.tsx",
-      "sha256": "79451792850a1ca0156d65c8c57e7626afd06bdf183f3dbb9af0b92f594f5f03"
+      "sha256": "8de4a2535dd6aec74021688cacc1505dd4a471c28c04467b39abe3b169003baf"
     },
     {
       "path": "apps/web/app/routes/author.tsx",
@@ -282,7 +278,7 @@
     },
     {
       "path": "apps/web/app/server/api.ts",
-      "sha256": "1a5f8cb913e600d0392c51222ebf3a3ad5a82fa605b779512f6fbf768f489d88"
+      "sha256": "92bf5eabd0c93b7965bfe0f747154c51658c549aaa2450ddc49b42d1d08768c2"
     },
     {
       "path": "apps/web/app/server/auth.ts",
@@ -294,11 +290,15 @@
     },
     {
       "path": "apps/web/app/server/posts.ts",
-      "sha256": "8e01101e0f2ede93f304f4cce2ddccbdece4d10a3e300ba2457a1f9e5412ebd2"
+      "sha256": "8a8813a905c6d2e144c62e79b13dc0e13d30c2219ca9fa247b258e03be9c48a4"
     },
     {
       "path": "apps/web/app/server/rate-limit.ts",
       "sha256": "5a0d8806ef5304811edb37c963e0a5eecbd232bfd5f8c1f0f5ebb6123fd9a4c4"
+    },
+    {
+      "path": "apps/web/app/server/sessions.ts",
+      "sha256": "52bb83f539cc7c8b6069d39d04423f55577fa30dd78f3dff8eaaace93fe3ae25"
     },
     {
       "path": "apps/web/workers/app.ts",
@@ -334,7 +334,7 @@
     },
     {
       "path": "apps/web/tests/server/api.test.ts",
-      "sha256": "9088a8643314bf92feabc2b1f92cffeabd593d150ad520312cea5ea30513c704"
+      "sha256": "aab40975af03aa16279953d7b3cffd94117858a7aed3ca9ea3e00edfa6d3f643"
     },
     {
       "path": "apps/web/tests/ui/document-paths.test.ts",
@@ -386,7 +386,7 @@
     },
     {
       "path": "packages/shared/src/index.ts",
-      "sha256": "baafd26c9b2d446bea9f4505c487c0854567d812e309349a569d82e607aaeb2a"
+      "sha256": "cacfbfc294a964d2fb472859c0c948ae17feefb942ccba715bf7c5e604f9222c"
     },
     {
       "path": "packages/shared/test/schema.test.ts",
@@ -402,11 +402,11 @@
     },
     {
       "path": "packages/collector/src/api.ts",
-      "sha256": "8852d2c73d59fc6c502f16b89a1a628fdf4ae84f13b6fd516412d38842149ef1"
+      "sha256": "670ccc5b8dfebbc999120827bb7b1ab963bbef410e83c029833ee796c312fdcd"
     },
     {
       "path": "packages/collector/src/cli.ts",
-      "sha256": "6c3796eff070c68d64035bfb90c4cf4ef4f3b68f3c4cf1be8f723fa173489aab"
+      "sha256": "fd46b93387b8b01f26deca6bd28b7d97cac3812d95b76a04a304bda2a3d078bc"
     },
     {
       "path": "packages/collector/src/collect.ts",
@@ -418,7 +418,7 @@
     },
     {
       "path": "packages/collector/src/draft.ts",
-      "sha256": "828f328c21feb4290edf8482366c51e32e6d0d72d803c19e9caf50cbb4c3fdc9"
+      "sha256": "6277c9711fe231d126e8461dfbd1067b3f3873d46549ef43a42a363ae983fe97"
     },
     {
       "path": "packages/collector/src/errors.ts",
@@ -438,7 +438,7 @@
     },
     {
       "path": "packages/collector/test/draft.test.ts",
-      "sha256": "050b4b11d3f0b5380d78b1f3ae86dd8427805b0942eaf09d377be667aa6acef4"
+      "sha256": "cbbc181227ca696f2cd2c730fe4dbeb2289d034dd05e68ff2e304d7981ff5ff0"
     },
     {
       "path": "packages/collector/package.json",
@@ -450,11 +450,11 @@
     },
     {
       "path": "plugins/my-micro/.codex-plugin/plugin.json",
-      "sha256": "7428d90dff01840d3b57e08837cb4edf618d96e9852f33b232158a68b207cf3d"
+      "sha256": "aafce94f924205246c387f63166c50f15081490e0a2c298434b79198f4f6e7b9"
     },
     {
       "path": "plugins/my-micro/INSTALL.md",
-      "sha256": "193c0aecd5a76387ee502c017396f7827356d2f6f7d82f43b94c59b4cce22fb0"
+      "sha256": "3511a888fe75c4db1208faae893ca4496aa7c54df1a47e7eebbeec8d0fed4e8e"
     },
     {
       "path": "plugins/my-micro/THIRD-PARTY-NOTICES.txt",
@@ -462,7 +462,7 @@
     },
     {
       "path": "plugins/my-micro/scripts/my-micro.mjs",
-      "sha256": "0025e15a1ebb9f2acaed58509333a834a522fa63ee607e910cbd797a042c94bf"
+      "sha256": "f292d8ba99a96569d4a888b54b37c45c4c9cf7564f8ca1d5afc093da647c81f9"
     },
     {
       "path": "plugins/my-micro/scripts/run.sh",
@@ -474,7 +474,7 @@
     },
     {
       "path": "plugins/my-micro/skills/share-micro/SKILL.md",
-      "sha256": "087e0aa48c80cdb3501c2c716c217d971628f27c8948fa79c52e83c436f8e777"
+      "sha256": "b240f8ba0ba14e951eab6daae29a0527b7eb246517765dc09ec20101ea790bbd"
     },
     {
       "path": "plugins/my-micro/skills/share-micro/agents/openai.yaml",
@@ -482,7 +482,7 @@
     },
     {
       "path": "docs/server-setup.md",
-      "sha256": "e70bed55bac9be3172476ee2b75548cee2d9520d16c00b96aee24219fb2d13e8"
+      "sha256": "dcfd9c5fb7964724f22bb487766766f03a81d3855e221169b34eb8f182684c16"
     },
     {
       "path": "docs/release.md",
@@ -490,7 +490,7 @@
     },
     {
       "path": "scripts/export-release.mjs",
-      "sha256": "cddb166d16bf060baaf2538ad9f50f25e875efbba9f174b89f11c77b31ffc1c3"
+      "sha256": "99adc39b17f2ae2670fba0c4ece5c54136c513c0e262a9df04764d8fa7d27496"
     }
   ]
 }
