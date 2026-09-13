@@ -1,6 +1,6 @@
 # Server setup and operations
 
-The implementation uses Cloudflare Workers, native D1 bindings, and Better Auth 1.7.4 with GitHub, Device Authorization, and Bearer. The Wrangler `production` environment identifies the production account and D1 database. A real GitHub OAuth login and the production `workers.dev` flow still require the operator's secrets and end-to-end verification.
+The implementation uses Cloudflare Workers, native D1 bindings, and Better Auth 1.7.4 with GitHub, Device Authorization, and Bearer. The Wrangler `production` environment identifies the production account and D1 database. The ikekou-lab deployment was verified with a real GitHub OAuth login on 2026-09-13.
 
 ## Local setup
 
@@ -17,7 +17,7 @@ Run `npm run db:migrate` and `npm run dev` from the repository root. For a local
 
 `apps/web/wrangler.jsonc` keeps the local configuration at the top level and production settings under `env.production`. Production explicitly defines the Worker name `my-micro`, account ID, complete `vars`, and D1 binding because variables and bindings are not inherited between environments. The local placeholder database ID is intentional: local migration and development commands use local D1 storage.
 
-The production origin is `https://my-micro.ikekou-20f.workers.dev`. Register `https://my-micro.ikekou-20f.workers.dev/api/auth/callback/github` as the GitHub OAuth callback and use that App's credentials in production. Keep the local callback registered too, or use a separate App for local development. This application's device authorization is handled by Better Auth; GitHub's Device Flow setting is not required. Keep the plugin's service origin in sync with the production origin. The operator selected `https://github.com/ikekou/my-micro/issues` for production `SUPPORT_URL`.
+The production origin is `https://my-micro.ikekou-lab.workers.dev`. Register `https://my-micro.ikekou-lab.workers.dev/api/auth/callback/github` as the GitHub OAuth callback and use that App's credentials in production. Keep the local callback registered too, or use a separate App for local development. This application's device authorization is handled by Better Auth; GitHub's Device Flow setting is not required. Keep the plugin's service origin in sync with the production origin. The operator selected `https://github.com/ikekou/my-micro/issues` for production `SUPPORT_URL`.
 
 Run the following from `apps/web`, after checking the intended account and database:
 
@@ -35,7 +35,7 @@ The secret and remote migration scripts explicitly select the source configurati
 
 The ordinary `build`, `dev`, and `preview` scripts explicitly clear `CLOUDFLARE_ENV` for local use. Both build modes write to the same output directory, so `preview` always rebuilds the local configuration first. Do not run bare `vite preview` against a production build or reuse the HTTPS production origin for a localhost session: cookie and Origin checks require the browser and configured origins to match. Environment selection happens during development or build, not during preview. See [Cloudflare environments](https://developers.cloudflare.com/workers/vite-plugin/reference/cloudflare-environments/) and [GitHub OAuth App callbacks](https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/creating-an-oauth-app).
 
-Production OAuth credentials and end-to-end browser login have not been verified by the local test suite.
+The local test suite does not contact GitHub. The ikekou-lab production browser login was separately verified on 2026-09-13.
 
 ## HTTP contract
 

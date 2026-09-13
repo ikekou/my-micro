@@ -4,7 +4,7 @@ Codex Microの設定を眺め、自分の使い方も共有するギャラリー
 
 Browse how people use Codex Micro, then share your own setup from Codex. The site offers Japanese and English interfaces; post text stays in its original language.
 
-[ギャラリーを開く / Open the gallery](https://my-micro.ikekou-20f.workers.dev/) · [自分のMicroを共有 / Share your Micro](https://my-micro.ikekou-20f.workers.dev/share)
+[ギャラリーを開く / Open the gallery](https://my-micro.ikekou-lab.workers.dev/) · [自分のMicroを共有 / Share your Micro](https://my-micro.ikekou-lab.workers.dev/share)
 
 ## できること
 
@@ -52,3 +52,5 @@ npm run build
 [公開手順](docs/release.md)に従い、設定・認証・配布経路を実環境で確認してから公開します。開発リポジトリの調査メモやGit履歴は、公開用出力に含めません。
 
 コードはMIT。投稿者の設定・文章に、このコードのライセンスを自動的に適用するものではありません。同梱ライブラリは[ライセンス一覧](plugins/my-micro/THIRD-PARTY-NOTICES.txt)を参照してください。
+
+キーキャップの図柄はOpenAI由来の素材で、My MicroのMITコードライセンスには含まれません。出典は [素材の説明](apps/web/app/assets/micro-keycaps/README.md) を参照してください。

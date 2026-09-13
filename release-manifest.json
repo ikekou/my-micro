@@ -2,7 +2,7 @@
   "files": [
     {
       "path": "README.md",
-      "sha256": "b2056cd1bf24b3d389d4b91999ad7f80549f75f1c5d9eb8fb01af1a2905d4696"
+      "sha256": "268e8b8eac70026fa706f56abe7a7fc397da1f7fa246fedf7757dcd8dccac621"
     },
     {
       "path": "LICENSE",
@@ -29,8 +29,144 @@
       "sha256": "c4bef11988f3b6a75f50ce6d51f16e27afa03d146d96acc229a1be8fe89950e8"
     },
     {
+      "path": "apps/web/app/.DS_Store",
+      "sha256": "579a04978ff8b27632cf11b5a7d1b3116d244c0af377be959a82b934053ca29e"
+    },
+    {
       "path": "apps/web/app/app.css",
-      "sha256": "b11a4fb7ec28cf06f6cbbcb21f2c820e485086ea55fd9ff268030f7861ed2fea"
+      "sha256": "580c3c6a13949be0784489b348f5aa26d9e784867ac029d4b9aaa7ded084725d"
+    },
+    {
+      "path": "apps/web/app/assets/micro-keycaps/APPR.svg",
+      "sha256": "f61dbeae0fcda4c229e65d7a87a7d5e16833f910b1a343713533b2e4edbf0c41"
+    },
+    {
+      "path": "apps/web/app/assets/micro-keycaps/APPS.svg",
+      "sha256": "8fe282fccc3cb8a6366ca8860732b5191b7a34b66a5c1982ee6ca8ddc8cc09fd"
+    },
+    {
+      "path": "apps/web/app/assets/micro-keycaps/BRANCH.svg",
+      "sha256": "690729e8ddc8f7046e522b1ff1eff673fffce9637c994e5f63232412fc0d971d"
+    },
+    {
+      "path": "apps/web/app/assets/micro-keycaps/BRCH.svg",
+      "sha256": "734d5783d5626ec228b1f3989af34f9deb164787ff261591154eb0f061670f72"
+    },
+    {
+      "path": "apps/web/app/assets/micro-keycaps/BUG.svg",
+      "sha256": "b6eddb54bc2258dabc3645c4adb5ffd9582c79c66909323ef34fc3480dd5104c"
+    },
+    {
+      "path": "apps/web/app/assets/micro-keycaps/CODEX.svg",
+      "sha256": "b62a4647cac1e0a839b87cb3cd38403e2042440edbabc48ee1b7402eb527febb"
+    },
+    {
+      "path": "apps/web/app/assets/micro-keycaps/DEL.svg",
+      "sha256": "745f62064839d549f79bb06c749cad50252c230405aba9c5f0ae14f611033bbe"
+    },
+    {
+      "path": "apps/web/app/assets/micro-keycaps/DIFF.svg",
+      "sha256": "c62d7b7de4a6fcec97f26f060882a19ca0ec869f51e0c0f37b34f24298c47f54"
+    },
+    {
+      "path": "apps/web/app/assets/micro-keycaps/DWN.svg",
+      "sha256": "7deef9010504ff7c766702662f922462ed8c928f7491ae8d4a266bcce2242dc4"
+    },
+    {
+      "path": "apps/web/app/assets/micro-keycaps/FAST.svg",
+      "sha256": "d6855891d5bd6c6801111910d895ff02fd1dc070394aca9a7d336103b0882300"
+    },
+    {
+      "path": "apps/web/app/assets/micro-keycaps/FOLD.svg",
+      "sha256": "52adf5b5217beaeaaee04c0778283a0bf51493b0caef897f2f729ae4960d8bb8"
+    },
+    {
+      "path": "apps/web/app/assets/micro-keycaps/GIT.svg",
+      "sha256": "c62d7b7de4a6fcec97f26f060882a19ca0ec869f51e0c0f37b34f24298c47f54"
+    },
+    {
+      "path": "apps/web/app/assets/micro-keycaps/LAB.svg",
+      "sha256": "0d66d41604a8d67974f6fd6a4e58fb9a4ccbd8117ac784af1b062e40a0850261"
+    },
+    {
+      "path": "apps/web/app/assets/micro-keycaps/MAGIC.svg",
+      "sha256": "90c71f9e95f3f4dff3c584929f7415424be69f53c3fabf7716622e079aae0391"
+    },
+    {
+      "path": "apps/web/app/assets/micro-keycaps/MIC.svg",
+      "sha256": "1a04444772bb74f39a089b3e2ff75ec11475ca7519e06d5ad46b4372690f9e89"
+    },
+    {
+      "path": "apps/web/app/assets/micro-keycaps/MIC1.svg",
+      "sha256": "1a04444772bb74f39a089b3e2ff75ec11475ca7519e06d5ad46b4372690f9e89"
+    },
+    {
+      "path": "apps/web/app/assets/micro-keycaps/MIND-minus.svg",
+      "sha256": "72e10f5f39f43c86a0ebaaa5a7479c2c6b0ab0a2ea80bdd628a8e83d84c64e45"
+    },
+    {
+      "path": "apps/web/app/assets/micro-keycaps/MIND-plus.svg",
+      "sha256": "a7e621771d32b953e10d72f28a2595bac01d108932d0273fe9ec90e083a2949d"
+    },
+    {
+      "path": "apps/web/app/assets/micro-keycaps/MRG.svg",
+      "sha256": "63cd4d83b2c2faf41d1d44887eb076bf654dcef3d5a8192c7d8b3753b4d61caf"
+    },
+    {
+      "path": "apps/web/app/assets/micro-keycaps/NAV.svg",
+      "sha256": "ea0aeaee4a8fe946098b5758023eb0d894e297393dbb9b48396a94d2aa9074b4"
+    },
+    {
+      "path": "apps/web/app/assets/micro-keycaps/NEW.svg",
+      "sha256": "5efb558fcf1fc27eeaa9cdd544f7e0b50266c0956b67d040e71e09b2dc24047a"
+    },
+    {
+      "path": "apps/web/app/assets/micro-keycaps/OAI.svg",
+      "sha256": "e38bf2c50c3f643a17730abea568f2ee2b1523fa8485534e7051dbf3503ded52"
+    },
+    {
+      "path": "apps/web/app/assets/micro-keycaps/PAINT.svg",
+      "sha256": "09ef1acdeb866bcc3ac9572ce82fca02185d7de227278e44c16276d208db98ba"
+    },
+    {
+      "path": "apps/web/app/assets/micro-keycaps/PARTY.svg",
+      "sha256": "3da420acb267f6ebdd1c18da33cca824a0daf403630588cb4747d86ffbbbb2a5"
+    },
+    {
+      "path": "apps/web/app/assets/micro-keycaps/PLAY.svg",
+      "sha256": "9dad6f65345ae8663936fc430075358b453794cf5ed927f2d0fa0bf77822b38e"
+    },
+    {
+      "path": "apps/web/app/assets/micro-keycaps/PR.svg",
+      "sha256": "4bec06df59f785665fe5ebf39508abe7a1ef1fbb3b026a686baf23864ace8351"
+    },
+    {
+      "path": "apps/web/app/assets/micro-keycaps/README.md",
+      "sha256": "67092a4430564889abd5481d5953d173008883bd7b69f4bfc6dfe414b4981d5a"
+    },
+    {
+      "path": "apps/web/app/assets/micro-keycaps/REJ.svg",
+      "sha256": "d9045b0883c8fc3886a9c661ce7b779dcab47c2283ab76d7f12f64c25c7d5dac"
+    },
+    {
+      "path": "apps/web/app/assets/micro-keycaps/SETUP.svg",
+      "sha256": "b64a6920b6e8ad50ed28b3f693c4768ff0e653f3652668628eccd20af107e5e3"
+    },
+    {
+      "path": "apps/web/app/assets/micro-keycaps/SPLIT.svg",
+      "sha256": "805f96312dd73d49570ab7686c8b575fdaf24d998441f587dd03657ed21efe5f"
+    },
+    {
+      "path": "apps/web/app/assets/micro-keycaps/TERM.svg",
+      "sha256": "e5f4d57063a71091b9e6c7b2c5d51fa1f607c91cee35f3f027cef563ce6678a2"
+    },
+    {
+      "path": "apps/web/app/assets/micro-keycaps/TIME.svg",
+      "sha256": "a2e29e0d03850edda3b84eaa8608739f62d42dbe2db9b5977fb376485e46394b"
+    },
+    {
+      "path": "apps/web/app/assets/micro-keycaps/UPL.svg",
+      "sha256": "c5b89b5527a8bc21575e1dd0c39de480cb25590780cf7fc16e250e46797dbae2"
     },
     {
       "path": "apps/web/app/components/copy-prompt.tsx",
@@ -46,7 +182,11 @@
     },
     {
       "path": "apps/web/app/components/micro-board.tsx",
-      "sha256": "f16ff57776fcdded3119fe9395bea9c042a20dc2ff215bee0312bd252a812c05"
+      "sha256": "a7ac69c8089581fd220aa8cf0fdf6d577b9eb2342a7c27205f396e36d3274c6b"
+    },
+    {
+      "path": "apps/web/app/components/micro-keycap.tsx",
+      "sha256": "9c2ff245dc6d9e878ce484b8aa81559b3428dab48abb4f9bc40075077503a88a"
     },
     {
       "path": "apps/web/app/components/site-shell.tsx",
@@ -206,7 +346,7 @@
     },
     {
       "path": "apps/web/wrangler.jsonc",
-      "sha256": "3e38848890955ec757294825cbce2d1323a064425cb6316e4bd3056027345094"
+      "sha256": "f5df421e750368eaf5017b3d7fddb7a5c7088857beddf1e7af1a626745220e0a"
     },
     {
       "path": "apps/web/tsconfig.json",
@@ -290,11 +430,11 @@
     },
     {
       "path": "plugins/my-micro/.codex-plugin/plugin.json",
-      "sha256": "9aeb5ee83c028ee94af970ee9e3f12e3888053049fa263365dcf7b7267fd9fd2"
+      "sha256": "7428d90dff01840d3b57e08837cb4edf618d96e9852f33b232158a68b207cf3d"
     },
     {
       "path": "plugins/my-micro/INSTALL.md",
-      "sha256": "f2d72993aa178b386fb87ab66fc4ce2885965214d154cb16f1b6a790d51efad1"
+      "sha256": "193c0aecd5a76387ee502c017396f7827356d2f6f7d82f43b94c59b4cce22fb0"
     },
     {
       "path": "plugins/my-micro/THIRD-PARTY-NOTICES.txt",
@@ -310,7 +450,7 @@
     },
     {
       "path": "plugins/my-micro/service.json",
-      "sha256": "21f3f690c8d2323490c907d1c60821bf02253e65d5b2287e4bee2203702ee570"
+      "sha256": "f525d2251ca7d491ab966aa4e0a59e576a02ce758c49e03eb18e13ba9998f28d"
     },
     {
       "path": "plugins/my-micro/skills/share-micro/SKILL.md",
@@ -322,11 +462,11 @@
     },
     {
       "path": "docs/server-setup.md",
-      "sha256": "922aae2b49360fe918e96060f851af9e18a13fe371faf2bc9c16aeac87392b54"
+      "sha256": "e70bed55bac9be3172476ee2b75548cee2d9520d16c00b96aee24219fb2d13e8"
     },
     {
       "path": "docs/release.md",
-      "sha256": "a39c7b8399fb2e032b97e810fe869a3aaeafd54c56aa112c406bceb83f83de0c"
+      "sha256": "af1fb597c72dfc2e9868da53a719d254677c19b906eafb49bc54087123858350"
     },
     {
       "path": "scripts/export-release.mjs",

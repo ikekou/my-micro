@@ -2,6 +2,7 @@ import { useState, type ReactNode } from "react";
 import { actionLabel, type Locale, type MicroSettings, type MicroSlot, type PublicAction } from "@my-micro/shared";
 import { useLocale, words } from "../lib/i18n";
 import { Icon } from "./icon";
+import { Keycap } from "./micro-keycap";
 
 const agentPositions = [[1, 2], [1, 3], [2, 1], [2, 2], [2, 3], [2, 4]];
 const actionPositions: Record<string, [number, number]> = { ACT06: [3, 1], ACT07: [3, 2], ACT08: [3, 3], ACT09: [3, 4], ACT10: [4, 2], ACT11: [4, 3], ACT10_ACT11: [4, 2], ACT12: [4, 4] };
@@ -13,13 +14,6 @@ export function optionLabel(value: string, locale: Locale): string {
     never: ["Never", "なし"], off: ["Off", "オフ"], "30-seconds": ["30 seconds", "30秒"], "1-minute": ["1 minute", "1分"], "3-minutes": ["3 minutes", "3分"], "5-minutes": ["5 minutes", "5分"], "10-minutes": ["10 minutes", "10分"], "15-minutes": ["15 minutes", "15分"], "30-minutes": ["30 minutes", "30分"], "1-hour": ["1 hour", "1時間"],
   };
   return labels[value]?.[locale === "ja" ? 1 : 0] ?? value;
-}
-
-function Keycap({ id }: { id: string }) {
-  if (id.startsWith("MIND")) return <span className="mind-key"><Icon name="brain" size={23} /><small>{id.endsWith("+") ? "+" : "−"}</small></span>;
-  const names: Record<string, string> = { MIC: "mic", MIC1: "mic", NEW: "new", SPLIT: "split", CODEX: "codex", OAI: "codex", SEND: "send", FAST: "fast", APPR: "check", APPROVE: "check", YES: "check", REJ: "close", DECLINE: "close", NO: "close", TERM: "terminal", TERMINAL: "terminal", BROWSER: "browser", NAV: "browser", BUG: "bug", DWN: "download", UPL: "upload", DEL: "archive", MAGIC: "magic", DIFF: "diff", PLAY: "play", GIT: "git", BRCH: "git", BRANCH: "git", MRG: "merge", PR: "git", PAINT: "paint", LAB: "lab", PARTY: "apps", TIME: "time", SETUP: "setup", FOLD: "folder", APPS: "apps" };
-  if (id.startsWith("EMPT") || id === "EMPTY" || id === "BLANK") return null;
-  return names[id] ? <Icon name={names[id]} size={23} /> : <span className="keycap-text">{id}</span>;
 }
 
 export function MicroBoard({ settings, interactive = false, selected, onSelect }: { settings: MicroSettings; interactive?: boolean; selected?: string; onSelect?: (id: string) => void }) {
