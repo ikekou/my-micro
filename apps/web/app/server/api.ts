@@ -3,6 +3,7 @@ import { authenticationHeaders, createAuth, getSession, requireSession } from ".
 import { ApiError, boundedBody, checkWriteOrigin, errorResponse, json, readJson } from "./http";
 import { assertCanWrite, createPost, deletePost, getOwnedPost, getPost, listPosts, publicAuthor, updatePost } from "./posts";
 import { enforceRate } from "./rate-limit";
+import { listSessions } from "./sessions";
 
 const authRoutes = new Map([
   ["/sign-in/social", "POST"], ["/callback/github", "GET"],
@@ -70,9 +71,7 @@ async function dispatch(request: Request, env: Env): Promise<Response> {
     }
     if (path === "/api/v1/me/sessions") {
       const session = await requireSession(request, env);
-      const rows = await env.DB.prepare('SELECT id, createdAt, expiresAt, userAgent FROM session WHERE userId = ? AND expiresAt > ? ORDER BY createdAt DESC LIMIT 100')
-        .bind(session.user.id, new Date().toISOString()).all<{ id: string; createdAt: string; expiresAt: string; userAgent: string | null }>();
-      return json({ sessions: rows.results.map((row) => ({ id: row.id, createdAt: new Date(row.createdAt).toISOString(), expiresAt: new Date(row.expiresAt).toISOString(), userAgent: row.userAgent, current: row.id === session.session.id })) });
+      return json(await listSessions(env.DB, url, session.user.id, session.session.id));
     }
   }
 

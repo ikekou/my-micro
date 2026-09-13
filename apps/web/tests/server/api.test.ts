@@ -9,7 +9,7 @@ import { bindCreateDraft, createDraft, ownedPost, publishDraft } from "../../../
 import { Miniflare, convertV4MiniflareOptions } from "miniflare";
 import { getMigrations } from "better-auth/db/migration";
 import { createFixturePostInput } from "@my-micro/shared/fixtures";
-import type { PostPage, PublicPost } from "@my-micro/shared";
+import type { PostPage, PublicPost, SessionPage } from "@my-micro/shared";
 import { handleApi } from "../../app/server/api";
 import { createAuth } from "../../app/server/auth";
 import { serializeSignedCookie } from "better-call";
@@ -360,4 +360,46 @@ test("owners can prepare deletion of hidden posts without exposing or updating t
     const row = await env.DB.prepare("SELECT settings, deleted_at FROM posts WHERE id = ?").bind(post.id).first<{settings:string|null;deleted_at:number|null}>();
     assert.equal(row?.settings,null);assert.notEqual(row?.deleted_at,null);
   } finally { await rm(directory,{recursive:true,force:true}); }
+});
+
+test("connection pages expose all sessions with stable ties and always include the current connection", async () => {
+  await env.DB.prepare("UPDATE session SET createdAt = ? WHERE id = ?").bind("2020-01-01T00:00:00.000Z",`${aliceId}-session`).run();
+  const now = new Date().toISOString();
+  const expires = new Date(Date.now()+86_400_000).toISOString();
+  const ids = Array.from({length:102},(_,i)=>`extra-${String(i).padStart(3,'0')}`);
+  await env.DB.batch(ids.map(id=>env.DB.prepare("INSERT INTO session (id, token, userId, createdAt, updatedAt, expiresAt) VALUES (?, ?, ?, ?, ?, ?)").bind(id,`synthetic-${id}`,aliceId,now,now,expires)));
+  await env.DB.prepare("INSERT INTO session (id, token, userId, createdAt, updatedAt, expiresAt) VALUES (?, ?, ?, ?, ?, ?)").bind('expired','synthetic-expired',aliceId,now,now,"2020-01-01T00:00:00.000Z").run();
+  assert.equal((await call('/api/v1/me/sessions')).status,401);
+  const firstResponse = await call('/api/v1/me/sessions',{headers:headers()});
+  const firstText = await firstResponse.text();
+  assert(!firstText.includes('synthetic-'));assert(!firstText.includes(aliceToken));assert(!firstText.includes('192.0.2.1'));
+  const first = JSON.parse(firstText) as SessionPage;
+  assert.equal(first.sessions.length,20);assert(first.page.cursor);
+  assert(!first.sessions.some(row=>row.current));
+  assert.equal(first.currentSession?.id,`${aliceId}-session`);assert.equal(first.currentSession?.current,true);
+  assert.equal((await call(`/api/v1/me/sessions?cursor=${first.page.cursor}`,{headers:headers(bobToken)})).status,400);
+  // Removing a row on the previous page must not offset the next page.
+  const removed = first.sessions[0]!.id;
+  assert.equal((await call(`/api/v1/me/sessions/${removed}`,{method:'DELETE',headers:headers()})).status,204);
+  const seen = first.sessions.map(row=>row.id);
+  let cursor = first.page.cursor;
+  let pages = 0;
+  while(cursor) {
+    assert(++pages < 10);
+    const response = await call(`/api/v1/me/sessions?cursor=${cursor}`,{headers:headers()});assert.equal(response.status,200);
+    const next = await response.json() as SessionPage;
+    assert.equal(next.currentSession?.id,`${aliceId}-session`);
+    seen.push(...next.sessions.map(row=>row.id));cursor=next.page.cursor;
+  }
+  assert.equal(seen.length,103);assert.equal(new Set(seen).size,103);
+  assert.deepEqual(new Set(seen),new Set([...ids,`${aliceId}-session`]));
+  const refreshed = await call('/api/v1/me/sessions',{headers:headers()}).then(r=>r.json()) as SessionPage;
+  assert(!refreshed.sessions.some(row=>row.id===removed));assert.equal(refreshed.sessions.length,20);
+  const bob = await call('/api/v1/me/sessions',{headers:headers(bobToken)}).then(r=>r.json()) as SessionPage;
+  assert.deepEqual(bob.sessions.map(row=>row.id),[`${bobId}-session`]);assert.equal(bob.page.cursor,null);
+  for(const query of ['limit=0','limit=101','limit=1.5','cursor=','cursor=bad','cursor='+ 'a'.repeat(1025)]) {
+    assert.equal((await call('/api/v1/me/sessions?'+query,{headers:headers()})).status,400,query);
+  }
+  const bounded = await call('/api/v1/me/sessions?limit=100',{headers:headers()}).then(r=>r.json()) as SessionPage;
+  assert.equal(bounded.sessions.length,100);assert(bounded.page.cursor);
 });

@@ -51,7 +51,8 @@ All `/api/v1` errors are `{ "error": { "code": "...", "message": "..." } }`. Bet
 | `DELETE /api/v1/posts/:id` | `If-Match: "<reviewed-version>"`; 204 on success, 409 on a version change, 428 if omitted |
 | `GET /api/v1/me` | `{user:null}` or `{user:{id,username,avatarUrl}}` |
 | `GET /api/v1/me/posts` | The same page structure, restricted to the current owner; includes the owner's hidden posts for deletion |
-| `GET /api/v1/me/sessions` | `{sessions:[{id,createdAt,expiresAt,userAgent,current}]}` |
+| `GET /api/v1/me/posts/:id` | Owner-only post detail, including hidden posts for deletion; other owners receive 404 |
+| `GET /api/v1/me/sessions` | `{sessions:[{id,createdAt,expiresAt,userAgent,current}],currentSession,page:{cursor}}`; `limit` 1–100 (default 20), optional `cursor`; current connection is also returned separately on every page |
 | `DELETE /api/v1/me/sessions/:id` | Revoke one of the current user's sessions; 204 |
 | `POST /api/v1/me/sign-out` | Revoke the calling session and clear browser session cookies; 204 |
 

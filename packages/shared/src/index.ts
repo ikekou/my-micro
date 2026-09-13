@@ -74,6 +74,8 @@ export type PostUpdate = z.infer<typeof postUpdateSchema>;
 export interface PublicAuthor { id: string; username: string; avatarUrl: string | null }
 export interface PublicPost extends PostInput { id: string; author: PublicAuthor; version: number; createdAt: string; updatedAt: string }
 export interface PostPage { items: PublicPost[]; page: { seed: string; cutoff: string; cursor: string | null } }
+export interface SessionInfo { id: string; createdAt: string; expiresAt: string; userAgent: string | null; current: boolean }
+export interface SessionPage { sessions: SessionInfo[]; currentSession: SessionInfo | null; page: { cursor: string | null } }
 export interface ApiError { error: { code: string; message: string } }
 
 export function actionLabel(action: PublicAction, locale: Locale): string {
