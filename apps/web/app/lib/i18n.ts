@@ -8,7 +8,7 @@ export function requestLocale(request: Request): Locale {
   if (chosen === "ja" || chosen === "en") return chosen;
   const saved = request.headers.get("cookie")?.match(/(?:^|;\s*)my-micro-lang=(ja|en)(?:;|$)/)?.[1];
   if (saved === "ja" || saved === "en") return saved;
-  return request.headers.get("accept-language")?.split(",")[0]?.startsWith("ja") ? "ja" : "en";
+  return "en";
 }
 
 export function useSite() { return useRouteLoaderData<RootData>("root") ?? { locale: "en" as const, user: null, authAvailable: true }; }

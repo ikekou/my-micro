@@ -218,7 +218,7 @@
     },
     {
       "path": "apps/web/app/lib/i18n.ts",
-      "sha256": "b6082cac77ea5df6c2efa267df2caf95314306773b79dab02ea8a8a1e830847c"
+      "sha256": "31b45cbc2bcae0cfa8a90c09635f6f5e779bb461ac2be67633eead0952a1edd0"
     },
     {
       "path": "apps/web/app/lib/prompts.ts",
@@ -326,7 +326,7 @@
     },
     {
       "path": "apps/web/tests/ui/route-utils.test.ts",
-      "sha256": "804a96ed1389337e90e0422e6a94f877b1d2d5acf98fe1fdfb7cae90b498a94b"
+      "sha256": "d23f47d310962388b07e15f5061cfba57e8a9ad427d93d6dff4d416d564e1958"
     },
     {
       "path": "apps/web/package.json",

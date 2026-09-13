@@ -11,11 +11,13 @@ test('a sign-in return path preserves the device code but rejects external redir
   }
 });
 
-test('an explicit language wins over cookies and browser language without losing browsing state', () => {
+test('language defaults to English and preserves explicit choices and browsing state', () => {
   const headers = { Cookie: 'my-micro-lang=en', 'Accept-Language': 'ja-JP,en;q=0.8' };
   assert.equal(requestLocale(new Request('https://example.invalid/?lang=ja', { headers })), 'ja');
   assert.equal(requestLocale(new Request('https://example.invalid/', { headers })), 'en');
-  assert.equal(requestLocale(new Request('https://example.invalid/', { headers: { 'Accept-Language': 'ja-JP' } })), 'ja');
+  assert.equal(requestLocale(new Request('https://example.invalid/', { headers: { 'Accept-Language': 'ja-JP' } })), 'en');
+  assert.equal(requestLocale(new Request('https://example.invalid/')), 'en');
+  assert.equal(requestLocale(new Request('https://example.invalid/', { headers: { Cookie: 'my-micro-lang=ja' } })), 'ja');
   const link = new URL(localHref('/?seed=123&cutoff=2026-09-12T00%3A00%3A00Z&q=scroll#main', 'en'), 'https://example.invalid');
   assert.equal(link.searchParams.get('seed'), '123');
   assert.equal(link.searchParams.get('q'), 'scroll');
