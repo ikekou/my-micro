@@ -2,7 +2,7 @@
 
 This plugin ships a skill and a bundled Node CLI. End users do not need npm. Supported collection: macOS Codex app **26.908.40834 (8881)**. Other app builds stop before config collection.
 
-The distribution repository is `ikekou/my-micro`, and the release is pinned to `v0.1.1`. `service.json` sets the default service origin to `https://my-micro.ikekou-lab.workers.dev`. These are release settings; they do not establish that deployment, remote installation, or posting has been verified. The repository and release tag must be published before using the remote installation commands below.
+The distribution repository is `ikekou/my-micro`, and the release is pinned to `v0.1.2`. `service.json` sets the default service origin to `https://my-micro.ikekou-lab.workers.dev`. These are release settings; they do not establish that deployment, remote installation, or posting has been verified. The repository and release tag must be published before using the remote installation commands below.
 
 ## Install in Codex
 
@@ -11,11 +11,11 @@ Use the official Codex CLI available in the application. Check for an existing i
 After the release has been published:
 
 ```sh
-codex plugin marketplace add ikekou/my-micro --ref v0.1.1 --json
+codex plugin marketplace add ikekou/my-micro --ref v0.1.2 --json
 codex plugin add my-micro@<marketplaceName-from-add-result> --json
 ```
 
-Confirm that `v0.1.1` exists in `ikekou/my-micro` and that `plugin add` returns manifest version `0.1.1`. For local development, replace the first command with `codex plugin marketplace add <repository-directory> --json`. The repository's marketplace name comes from the add result; do not assume it matches the plugin name.
+Confirm that `v0.1.2` exists in `ikekou/my-micro` and that `plugin add` returns manifest version `0.1.2`. For local development, replace the first command with `codex plugin marketplace add <repository-directory> --json`. The repository's marketplace name comes from the add result; do not assume it matches the plugin name.
 
 Read `skills/share-micro/SKILL.md` beneath the `installedPath` returned by `plugin add`. Run `scripts/run.sh` from that same installed plugin. This explicit read and script invocation works within the current conversation, including when the plugin was absent at the start. Automatic skill discovery in a new task is a separate path.
 
